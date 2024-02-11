@@ -101,9 +101,9 @@ function onSearch(event) {
         captionsData: 'alt',
         captionDelay: 250,
       });
-      // refreshPage.refresh();
+      refreshPage.refresh();
 
-        formSearch.reset();
+      formSearch.reset();
         
       btnLoad.style.display = 'block';
     
