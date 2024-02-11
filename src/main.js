@@ -13,8 +13,16 @@ const formSearch = document.querySelector('.form-search');
 const listImages = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 
+const endLoader = document.querySelector('.end-loader');
+const btnLoad = document.querySelector('.btn-load');
+
+let currentPage = 1;
+const perPage = 15;
 
 loader.style.display = 'none';
+endLoader.style.display = 'none';
+btnLoad.style.display = 'none';
+
 
 formSearch.addEventListener('submit', onSearch);
 
@@ -22,7 +30,9 @@ formSearch.addEventListener('submit', onSearch);
 function onSearch(event) {
     //сброс дефолтних налаштувань форми після події сабміт
   event.preventDefault();
-  
+  currentPage = 1;
+   btnLoad.style.display = 'none';
+ 
     // поле введення запиту не може бути порожнім при натисканні на кнопку відправки форми
     if (event.target.elements.search.value.trim() === '') {
         iziToast.show({
@@ -41,18 +51,31 @@ function onSearch(event) {
         return; 
     }
     //відображаєм повідомлення про завантаження зображень
-    loader.style.display = 'block';
+  
+  
 
   const inputValue = event.target.elements.search.value.trim();
   
 
 
 //  очищаємо галерею перед новим пошуком
-    listImages.innerHTML = '';
+  listImages.innerHTML = '';
+
+  
+  
 
     getPictures(inputValue)
-    .then(data => {
-     
+      .then(({ data }) => {
+
+        const totalPages = Math.ceil(data.totalHits / perPage);
+
+            if (currentPage === totalPages) {
+                btnLoad.style.display = 'none';
+                endLoader.style.display = 'block';
+            } else {
+                btnLoad.style.display = 'block';
+            }
+
 
       if (!data.hits.length) {
         iziToast.show({
@@ -67,19 +90,23 @@ function onSearch(event) {
         iconUrl: iconRejected,
         });
         }
-        console.log(data.hits);
-        console.log(data.hits.length);
+        
+      
 
 
-     listImages.insertAdjacentHTML('afterbegin', createMarkup(data.hits));
+      listImages.insertAdjacentHTML('afterbegin', createMarkup(data.hits));
+        
       const refreshPage = new SimpleLightbox('.gallery a', {
         captions: true,
         captionsData: 'alt',
         captionDelay: 250,
       });
-      refreshPage.refresh();
+      // refreshPage.refresh();
 
-      formSearch.reset();
+        formSearch.reset();
+        
+      btnLoad.style.display = 'block';
+    
     })
     .catch((error) => {
       
@@ -98,5 +125,9 @@ function onSearch(event) {
 
     })
   
-  .finally(() => loader.style.display = 'none');
+      .finally(() => {
+        loader.style.display = 'none';
+        
+        
+      });
 }
