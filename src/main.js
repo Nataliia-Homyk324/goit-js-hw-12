@@ -12,11 +12,22 @@ import iconRejected from './img/octagon.png'
 const formSearch = document.querySelector('.form-search');
 const listImages = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
+const endLoader = document.querySelector(".end-loader");// напис що закінчилися зображення в колекції
+const btnLoad = document.querySelector('.btn-load'); // кнопка завантажити ще
+const loaderMore = document.querySelector('.loader-more');
 
+let currentPage = 1;
+const perPage = 40;
+let inputSearch = '';
+let simpleLightboxExem;
 
 loader.style.display = 'none';
+loaderMore.style.display = 'none';
+btnLoader.style.display = 'none';
+endLoader.style.display = 'none';
 
 formSearch.addEventListener('submit', onSearch);
+btnLoader.addEventListener('click', onLoadMore);
 
 
 function onSearch(event) {
@@ -40,20 +51,41 @@ function onSearch(event) {
         });
         return; 
     }
+
+    currentPage = 1;
     //відображаєм повідомлення про завантаження зображень
     loader.style.display = 'block';
+    btnLoader.style.display = 'none';
+    endLoader.style.display = 'none';
 
-  const inputValue = event.target.elements.search.value.trim();
+  const inputSearch = event.target.elements.search.value.trim();
   
 
 
 //  очищаємо галерею перед новим пошуком
     listImages.innerHTML = '';
 
-    getPictures(inputValue)
-    .then(data => {
-     
+    if (!inputSearch) {
+        iziToast.warning({
+            title: 'Caution',
+            message: 'Sorry, but you did not fill out the field!',
+        });
+        loader.style.display = 'none';
+        return;
+    }
 
+    getPictures(inputValue,currentPage)
+        .then( ({ data }) => {
+     
+            const totalPages = Math.ceil(data.totalHits / perPage);
+            if (currentPage === totalPages) {
+                btnLoader.style.display = 'none';
+                endLoader.style.display = 'block';
+            } else {
+                btnLoader.style.display = 'block';
+            }
+
+            
       if (!data.hits.length) {
         iziToast.show({
         title: 'Sorry,',
@@ -66,18 +98,24 @@ function onSearch(event) {
         titleColor: '#fff',
         iconUrl: iconRejected,
         });
+          return;
         }
-        console.log(data.hits);
-        console.log(data.hits.length);
+        
 
 
-     listImages.insertAdjacentHTML('afterbegin', createMarkup(data.hits));
-      const refreshPage = new SimpleLightbox('.gallery a', {
+            listImages.insertAdjacentHTML('afterbegin', createMarkup(data.hits));
+            
+            iziToast.success({
+                title: 'Wow',
+                message: `We found ${data.totalHits} pictures!`,
+            });
+            
+      simpleLightboxExem = new SimpleLightbox('.gallery a', {
         captions: true,
         captionsData: 'alt',
         captionDelay: 250,
       });
-      refreshPage.refresh();
+      simpleLightboxExem.refresh();
 
       formSearch.reset();
     })
