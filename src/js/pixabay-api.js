@@ -1,6 +1,11 @@
+import axios from "axios";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+
+
 
 export { getPictures };
-
+    
 function getPictures(name) {
   const BASE_URL = 'https://pixabay.com/api/';
     const KEY = '42245088-70138ac1b5442bea0784205eb';
@@ -21,4 +26,6 @@ function getPictures(name) {
       return response.json();
     })
     
-};
+}
+
+ 
