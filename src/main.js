@@ -27,12 +27,15 @@ btnLoad.style.display = 'none';
 formSearch.addEventListener('submit', onSearch);
 btnLoad.addEventListener('click', onLoadMore);
 
+
 // обробник події натискання на кнопку пошук
 function onSearch(event) {
     //сброс дефолтних налаштувань форми після події сабміт
   event.preventDefault();
   currentPage = 1;
+
   
+   
     // поле введення запиту не може бути порожнім при натисканні на кнопку відправки форми
     if (event.target.elements.search.value.trim() === '') {
         iziToast.show({
@@ -66,7 +69,7 @@ function onSearch(event) {
 // робим запит на отримання зображень
     getPictures(inputValue, currentPage)
       .then(({ data }) => {
-        
+        console.log(data.totalHits);
         // обчислюєм кількість сторінок завантаження
         const totalPages = Math.ceil(data.totalHits / perPage);
             // перевіряєм чи це остання завантажена сторінка
@@ -107,7 +110,7 @@ function onSearch(event) {
       refreshPage.refresh();
 
       formSearch.reset();
-        
+      
       
     
     })
@@ -135,6 +138,9 @@ function onSearch(event) {
       }); 
   
 }
+
+
+
 function onLoadMore(event) {
   currentPage += 1;
   // console.log(currentPage);
@@ -171,8 +177,8 @@ function onLoadMore(event) {
     }
     
   )
+}  
 
 
-}
 
 
