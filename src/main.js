@@ -15,7 +15,7 @@ const loader = document.querySelector('.loader');
 
 const endLoader = document.querySelector('.end-loader');
 const btnLoad = document.querySelector('.btn-load');
-const inputValue = '';
+let inputValue = '';
 let currentPage = 1;
 const perPage = 15;
 
@@ -57,7 +57,7 @@ function onSearch(event) {
   
   
 
-  const inputValue = event.target.elements.search.value.trim();
+   inputValue = event.target.elements.search.value.trim();
   
 
 
