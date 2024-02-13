@@ -154,12 +154,33 @@ function onLoadMore(event) {
   // console.log(currentPage);
    
   loaderMore.style.display = 'block';
+//Щоб отримати висоту однієї карточки галереї використовуючи функцію getBoundingClientRect()
+//Отримуємо елемент галереї
+const galleryCard = document.querySelector('.gallery-item');
+
+ //Викликаємо функцію getBoundingClientRect і зберігаємо отриманий об'єкт
+let cardBoundingRect = galleryCard.getBoundingClientRect();
+
+ //Отримуємо висоту карточки з отриманого об'єкта
+  let cardHeight = cardBoundingRect.height;
+  console.log(cardHeight);
+
+
+
+
+
   getPictures(inputValue, currentPage)
     .then(({ data }) => {
       console.log(totalPages);
       console.log(currentPage);
       
       listImages.insertAdjacentHTML('beforeend', createMarkup(data.hits));
+// функція для плавного прокручування сторінкии на подвоєну висоту
+      window.scrollBy({
+                top: cardHeight * 2,
+                behavior: "smooth",
+            });
+
         
       const refreshPage = new SimpleLightbox('.gallery a', {
         captions: true,
@@ -195,6 +216,21 @@ function onLoadMore(event) {
       }); 
 }  
 
+// function smoothScrollToNextGroup() {
+//   //Щоб отримати висоту однієї карточки галереї використовуючи функцію getBoundingClientRect()
+// //Отримуємо елемент галереї
+// const galleryCard = document.querySelector('.gallery-item');
 
+//  //Викликаємо функцію getBoundingClientRect і зберігаємо отриманий об'єкт
+// const cardBoundingRect = galleryCard.getBoundingClientRect();
+
+//  //Отримуємо висоту карточки з отриманого об'єкта
+// const cardHeight = cardBoundingRect.height;
+  
+// window.scrollBy({
+//                 top: cardHeight * 2,
+//                 behavior: "smooth",
+//             });
+// }
 
 
