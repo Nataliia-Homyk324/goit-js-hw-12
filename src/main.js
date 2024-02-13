@@ -12,16 +12,20 @@ import iconRejected from './img/octagon.png'
 const formSearch = document.querySelector('.form-search');
 const listImages = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
-
+const loaderMore = document.querySelector('.loader-more');
 const endLoader = document.querySelector('.end-loader');
 const btnLoad = document.querySelector('.btn-load');
+
+
 let inputValue = '';
 let currentPage = 1;
 const perPage = 15;
+let totalPages = 0;
 
 loader.style.display = 'none';
 endLoader.style.display = 'none';
 btnLoad.style.display = 'none';
+loaderMore.style.display = 'none';
 
 
 formSearch.addEventListener('submit', onSearch);
@@ -71,13 +75,15 @@ function onSearch(event) {
       .then(({ data }) => {
         console.log(data.totalHits);
         // обчислюєм кількість сторінок завантаження
-        const totalPages = Math.ceil(data.totalHits / perPage);
+         totalPages = Math.ceil(data.totalHits / perPage);
             // перевіряєм чи це остання завантажена сторінка
             if (currentPage === totalPages) {
-                btnLoad.style.display = 'none';
-                endLoader.style.display = 'block';
+              btnLoad.style.display = 'none';
+              endLoader.style.display = 'block';
+              
             } else {
-                btnLoad.style.display = 'block';
+              btnLoad.style.display = 'block';
+              
             }
 
          // перевіряєм чи є завантажені елементи
@@ -147,6 +153,8 @@ function onLoadMore(event) {
 
   getPictures(inputValue, currentPage)
     .then(({ data }) => {
+      console.log(totalPages);
+      console.log(currentPage);
       listImages.insertAdjacentHTML('beforeend', createMarkup(data.hits));
         
       const refreshPage = new SimpleLightbox('.gallery a', {
