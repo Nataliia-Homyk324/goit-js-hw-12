@@ -15,7 +15,7 @@ const loader = document.querySelector('.loader');
 
 const endLoader = document.querySelector('.end-loader');
 const btnLoad = document.querySelector('.btn-load');
-
+const inputValue = '';
 let currentPage = 1;
 const perPage = 15;
 
@@ -25,14 +25,14 @@ btnLoad.style.display = 'none';
 
 
 formSearch.addEventListener('submit', onSearch);
+btnLoad.addEventListener('click', onLoadMore);
 
-
+// обробник події натискання на кнопку пошук
 function onSearch(event) {
     //сброс дефолтних налаштувань форми після події сабміт
   event.preventDefault();
   currentPage = 1;
-   btnLoad.style.display = 'none';
- 
+  
     // поле введення запиту не може бути порожнім при натисканні на кнопку відправки форми
     if (event.target.elements.search.value.trim() === '') {
         iziToast.show({
@@ -50,7 +50,7 @@ function onSearch(event) {
         });
         return; 
     }
-    //відображаєм повідомлення про завантаження зображень
+    
   
   
 
@@ -60,15 +60,16 @@ function onSearch(event) {
 
 //  очищаємо галерею перед новим пошуком
   listImages.innerHTML = '';
+// очищаєм напис про закінчення знайдених єлементів перед новим запитом
+  endLoader.style.display = 'none';
 
-  
-  
-
-    getPictures(inputValue)
+// робим запит на отримання зображень
+    getPictures(inputValue, currentPage)
       .then(({ data }) => {
-
+        
+        // обчислюєм кількість сторінок завантаження
         const totalPages = Math.ceil(data.totalHits / perPage);
-
+            // перевіряєм чи це остання завантажена сторінка
             if (currentPage === totalPages) {
                 btnLoad.style.display = 'none';
                 endLoader.style.display = 'block';
@@ -76,8 +77,9 @@ function onSearch(event) {
                 btnLoad.style.display = 'block';
             }
 
-
-      if (!data.hits.length) {
+         // перевіряєм чи є завантажені елементи
+        if (!data.hits.length) {
+       
         iziToast.show({
         title: 'Sorry,',
         message: 'there are no images matching your search query. Please try again!',
@@ -89,10 +91,11 @@ function onSearch(event) {
         titleColor: '#fff',
         iconUrl: iconRejected,
         });
+          
+           btnLoad.style.display = 'none';
+          
         }
         
-      
-
 
       listImages.insertAdjacentHTML('afterbegin', createMarkup(data.hits));
         
@@ -105,7 +108,7 @@ function onSearch(event) {
 
       formSearch.reset();
         
-      btnLoad.style.display = 'block';
+      
     
     })
     .catch((error) => {
@@ -129,5 +132,47 @@ function onSearch(event) {
         loader.style.display = 'none';
         
         
-      });
+      }); 
+  
 }
+function onLoadMore(event) {
+  currentPage += 1;
+  // console.log(currentPage);
+
+  getPictures(inputValue, currentPage)
+    .then(({ data }) => {
+      listImages.insertAdjacentHTML('beforeend', createMarkup(data.hits));
+        
+      const refreshPage = new SimpleLightbox('.gallery a', {
+        captions: true,
+        captionsData: 'alt',
+        captionDelay: 250,
+      });
+      refreshPage.refresh();
+
+     }
+
+  )
+    .catch((error) => {
+      
+      console.log(error);
+      iziToast.show({
+        title: 'Sorry,',
+        message: 'try again!',
+        position: 'bottomLeft',
+        backgroundColor: '#ef4040',
+        messageSize: 16,
+        messageColor: '#fff',
+        titleSize: 16,
+        titleColor: '#fff',
+        iconUrl: iconRejected,
+        });
+
+    }
+    
+  )
+
+
+}
+
+

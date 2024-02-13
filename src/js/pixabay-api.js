@@ -7,7 +7,7 @@ import "izitoast/dist/css/iziToast.min.css";
 export { getPictures };
     
     
-  async function getPictures(name) {
+  async function getPictures(name, page) {
   const BASE_URL = 'https://pixabay.com/api/';
   const KEY = '42245088-70138ac1b5442bea0784205eb';
 
@@ -18,6 +18,7 @@ export { getPictures };
     orientation: 'horizontal',
     safesearch: true,
     per_page: 15,
+    page: page,
   });
 
   try {
