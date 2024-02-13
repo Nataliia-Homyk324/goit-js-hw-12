@@ -262,7 +262,7 @@ body {
   justify-content: center;
 }
 
-/* .loader-more {
+.loader-more {
   display: block;
   position: relative;
   height: 25px;
@@ -286,4 +286,4 @@ body {
   to {
     width: 100%;
   }
-} */
+}

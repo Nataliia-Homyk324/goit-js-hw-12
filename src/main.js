@@ -67,6 +67,7 @@ function onSearch(event) {
 
 //  очищаємо галерею перед новим пошуком
   listImages.innerHTML = '';
+  loader.style.display = 'block';
 // очищаєм напис про закінчення знайдених єлементів перед новим запитом
   endLoader.style.display = 'none';
 
@@ -75,7 +76,8 @@ function onSearch(event) {
       .then(({ data }) => {
         console.log(data.totalHits);
         // обчислюєм кількість сторінок завантаження
-         totalPages = Math.ceil(data.totalHits / perPage);
+        totalPages = Math.ceil(data.totalHits / perPage);
+        
             // перевіряєм чи це остання завантажена сторінка
             if (currentPage === totalPages) {
               btnLoad.style.display = 'none';
@@ -150,11 +152,13 @@ function onSearch(event) {
 function onLoadMore(event) {
   currentPage += 1;
   // console.log(currentPage);
-
+   
+  loaderMore.style.display = 'block';
   getPictures(inputValue, currentPage)
     .then(({ data }) => {
       console.log(totalPages);
       console.log(currentPage);
+      
       listImages.insertAdjacentHTML('beforeend', createMarkup(data.hits));
         
       const refreshPage = new SimpleLightbox('.gallery a', {
@@ -185,6 +189,10 @@ function onLoadMore(event) {
     }
     
   )
+  .finally(() => {
+        loaderMore.style.display = 'none';
+          
+      }); 
 }  
 
 
