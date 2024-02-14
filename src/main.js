@@ -59,8 +59,6 @@ function onSearch(event) {
     }
     
   
-  
-
    inputValue = event.target.elements.search.value.trim();
   
 
@@ -118,6 +116,8 @@ function onSearch(event) {
       refreshPage.refresh();
 
       formSearch.reset();
+        
+
       
       
     
@@ -154,33 +154,15 @@ function onLoadMore(event) {
   // console.log(currentPage);
    
   loaderMore.style.display = 'block';
-//Щоб отримати висоту однієї карточки галереї використовуючи функцію getBoundingClientRect()
-//Отримуємо елемент галереї
-const galleryCard = document.querySelector('.gallery-item');
-
- //Викликаємо функцію getBoundingClientRect і зберігаємо отриманий об'єкт
-let cardBoundingRect = galleryCard.getBoundingClientRect();
-
- //Отримуємо висоту карточки з отриманого об'єкта
-  let cardHeight = cardBoundingRect.height;
-  console.log(cardHeight);
-
-
-
 
 
   getPictures(inputValue, currentPage)
     .then(({ data }) => {
-      console.log(totalPages);
-      console.log(currentPage);
       
       listImages.insertAdjacentHTML('beforeend', createMarkup(data.hits));
-// функція для плавного прокручування сторінкии на подвоєну висоту
-      window.scrollBy({
-                top: cardHeight * 2,
-                behavior: "smooth",
-            });
 
+  
+      smoothScrollToNextGroup();
         
       const refreshPage = new SimpleLightbox('.gallery a', {
         captions: true,
@@ -188,6 +170,11 @@ let cardBoundingRect = galleryCard.getBoundingClientRect();
         captionDelay: 250,
       });
       refreshPage.refresh();
+
+      if (currentPage === totalPages) {
+              btnLoad.style.display = 'none';
+              endLoader.style.display = 'block';
+              } 
 
      }
 
@@ -216,21 +203,19 @@ let cardBoundingRect = galleryCard.getBoundingClientRect();
       }); 
 }  
 
-// function smoothScrollToNextGroup() {
-//   //Щоб отримати висоту однієї карточки галереї використовуючи функцію getBoundingClientRect()
-// //Отримуємо елемент галереї
-// const galleryCard = document.querySelector('.gallery-item');
-
-//  //Викликаємо функцію getBoundingClientRect і зберігаємо отриманий об'єкт
-// const cardBoundingRect = galleryCard.getBoundingClientRect();
-
-//  //Отримуємо висоту карточки з отриманого об'єкта
-// const cardHeight = cardBoundingRect.height;
+function smoothScrollToNextGroup() {
   
-// window.scrollBy({
-//                 top: cardHeight * 2,
-//                 behavior: "smooth",
-//             });
-// }
+//Отримуємо елемент галереї
+  const galleryCard = document.querySelector('.gallery-item');
+  //Щоб отримати висоту однієї карточки галереї використовуючи функцію getBoundingClientRect()
+  // функція повертає обє'єкт, з якого отримуємо значення висоти карточки
+let cardHeight = galleryCard.getBoundingClientRect().height;
+console.log(cardHeight);
+  // плавний скролл методом scrollBy на об'єкті window
+window.scrollBy({
+                top: cardHeight * 2,
+                behavior: "smooth",
+            });
+}
 
 
