@@ -199,7 +199,7 @@ function onLoadMore(event) {
   )
   .finally(() => {
         loaderMore.style.display = 'none';
-          
+         
       }); 
 }  
 
